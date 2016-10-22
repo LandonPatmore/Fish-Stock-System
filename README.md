@@ -1,2 +1,8 @@
 # stock-system
-Homework for CSC 344.
+
+## Description
+* Stock system for fish market simulation.
+
+## Language
+* C++
+
