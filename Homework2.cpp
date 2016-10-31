@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -38,9 +39,9 @@ public:
      }
      void isEmpty(){
           if(currentAmount > 0){
-               printf("%s\n", "Not empty.");
+               cout << "Not empty." << endl;
           } else {
-               printf("%s\n", "Empty.");
+               cout << "Empty." << endl;
           }
      }
      string isOpen(){
@@ -49,40 +50,152 @@ public:
           } else {
                return "c";
           }
-          return "open";
      }
      void toString(){
-          printf("Seafood[%d(%d)%s]%s\n", getTotal(), getCurrentTotal(), getDate().c_str(), isOpen().c_str());
+          cout << "Seafood[" << getTotal() << "(" << getCurrentTotal() << ")" << getDate() << "]" << isOpen();
      }
 };
 
-vector<BoxOfSeafood> shrimp;
-vector<BoxOfSeafood> lobster;
-vector<BoxOfSeafood> crab;
-vector<BoxOfSeafood> swordfish;
+class BoxCalculations{
+public:
+     void addBoxToStock(BoxOfSeafood a){
+          if(a.getType() == "shrimp"){
+               shrimp.push_back(a);
+          } else if (a.getType() == "lobster"){
+               lobster.push_back(a);
+          } else if (a.getType() == "crab"){
+               crab.push_back(a);
+          } else if(a.getType() == "swordfish"){
+               swordfish.push_back(a);
+          } else {
+               cout << "Not an item we can stock." << endl;
+          }
+     }
+
+     int getTotalOfStock(vector<BoxOfSeafood> v){
+          int totalTotal = 0;
+          for(BoxOfSeafood i : v){
+               totalTotal = totalTotal + i.getTotal();
+          }
+          return totalTotal;
+     }
+
+
+     void addingStock(){
+          cout << "Adding seafood to stockpile." << endl;
+     }
+
+     bool checkDates(BoxOfSeafood a, BoxOfSeafood b){
+          return a.getDate() > b.getDate();
+     }
+
+     void getStockInformation(vector<BoxOfSeafood> v){
+          addingStock();
+          for(BoxOfSeafood i : v){
+               i.toString();
+               cout << " " << endl;
+          }
+     }
+
+     vector<BoxOfSeafood> getShrimp(){
+          return shrimp;
+     }
+     vector<BoxOfSeafood> getLobster(){
+          return lobster;
+     }
+     vector<BoxOfSeafood> getCrab(){
+          return crab;
+     }
+     vector<BoxOfSeafood> getSwordfish(){
+          return swordfish;
+     }
+
+protected:
+     vector<BoxOfSeafood> shrimp;
+     vector<BoxOfSeafood> lobster;
+     vector<BoxOfSeafood> crab;
+     vector<BoxOfSeafood> swordfish;
+};
 
 int main(void){
-
+     BoxCalculations c;
      BoxOfSeafood b;
-     b.set_values(50, "10/30/2016", "lobster");
-     if(b.getType() == "shrimp"){
-          shrimp.push_back(b);
-          printf("%s\n", "Added to shrimp vector.");
-     }else if(b.getType() == "lobster"){
-          lobster.push_back(b);
-          printf("%s\n", "Added to lobster vector.");
-          for(BoxOfSeafood i : lobster){
-               i.toString();
-          }
-     }else if(b.getType() == "crab"){
-          crab.push_back(b);
-          printf("%s\n", "Added to crab vector.");
-     }else if(b.getType() == "swordfish"){
-          swordfish.push_back(b);
-          printf("%s\n", "Added to swordfish vector.");
-     }else{
-          printf("%s\n", "Not a proper type.");
-     }
+
+     b.set_values(50, "10/31/16", "shrimp");
+     c.addBoxToStock(b);
+     b.set_values(12, "10/29/16", "shrimp");
+     c.addBoxToStock(b);
+     c.getStockInformation(c.getShrimp());
 
      return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//TO BE USED LATER
+
+
+
+// string command = "";
+//
+// while(command != "2"){
+//      cout << "Welcome to the stock-system.  Pick an option: " << endl;
+//      cout << "1. Enter new event." << endl;
+//      cout << "2. Exit." << endl;
+//      cin >> command;
+//
+//      if(command == "1"){
+//           string a;
+//      }else if(command != "1" && command != "2"){
+//           cout << "Invalid number. Try again." << endl;;
+//      }
+//
+// }
+// cout << "Exiting stock-system." << endl;
