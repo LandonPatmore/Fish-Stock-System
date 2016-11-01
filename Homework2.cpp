@@ -20,6 +20,12 @@ public:
           seafood = type;
 
      }
+
+     void setTotal(int t){
+          total = t;
+          currentAmount = t;
+     }
+
      int getTotal(){
           return total;
      }
@@ -58,18 +64,42 @@ public:
 
 class BoxCalculations{
 public:
-     void addBoxToStock(BoxOfSeafood a){
-          if(a.getType() == "shrimp"){
-               shrimp.push_back(a);
-          } else if (a.getType() == "lobster"){
-               lobster.push_back(a);
-          } else if (a.getType() == "crab"){
-               crab.push_back(a);
-          } else if(a.getType() == "swordfish"){
-               swordfish.push_back(a);
-          } else {
-               cout << "Not an item we can stock." << endl;
+     void stockBox(BoxOfSeafood a, int amount){
+          addingStock();
+          for(int i = 0; i < amount; i++){
+               if(a.getType() == "shrimp"){
+                    a.setTotal(50);
+                    shrimp.push_back(a);
+               } else if (a.getType() == "lobster"){
+                    a.setTotal(4);
+                    lobster.push_back(a);
+               } else if (a.getType() == "crab"){
+                    a.setTotal(6);
+                    crab.push_back(a);
+               } else if(a.getType() == "swordfish"){
+                    a.setTotal(8);
+                    swordfish.push_back(a);
+               } else {
+                    cout << "Not an item we can stock." << endl;
+               }
           }
+          getStockInformation(getShrimp());
+
+          if(a.getType() == "shrimp"){
+               cout << "Shrimp: ";
+               getStockInformation(getShrimp());
+          } else if (a.getType() == "lobster"){
+               cout << "Lobster: ";
+               getStockInformation(getLobster());
+          } else if (a.getType() == "crab"){
+               cout << "Crab: ";
+               getStockInformation(getCrab());
+          } else if(a.getType() == "swordfish"){
+               cout << "Swordfish: ";
+               getStockInformation(getSwordfish());
+          }
+
+
      }
 
      int getTotalOfStock(vector<BoxOfSeafood> v){
@@ -90,11 +120,11 @@ public:
      }
 
      void getStockInformation(vector<BoxOfSeafood> v){
-          addingStock();
           for(BoxOfSeafood i : v){
                i.toString();
-               cout << " " << endl;
+               cout << " ";
           }
+          cout << "\n" << endl;
      }
 
      vector<BoxOfSeafood> getShrimp(){
@@ -117,85 +147,38 @@ protected:
      vector<BoxOfSeafood> swordfish;
 };
 
-int main(void){
-     BoxCalculations c;
-     BoxOfSeafood b;
+class InputParsing{
+public:
+     string command = "";
+     void getInput(){
+          while (command != "exit") {
+               cout << "Enter an event." << endl;
+               string event, date, type;
+               int amount;
+               cin >> event >> date >> type >> amount;
+               checkEvent(event, date, type, amount);
+          }
+     }
 
-     b.set_values(50, "10/31/16", "shrimp");
-     c.addBoxToStock(b);
-     b.set_values(12, "10/29/16", "shrimp");
-     c.addBoxToStock(b);
-     c.getStockInformation(c.getShrimp());
+     void checkEvent(string e, string d, string t, int a){
+          BoxCalculations c;
+          BoxOfSeafood b;
+          b.set_values(0, d, t);
+          if(e == "stock"){
+               c.stockBox(b, a);
+          } else if(e == "buy"){
+
+          } else {
+               cout << "Invalid event." << endl;
+          }
+     }
+
+
+};
+
+int main(void){
+     InputParsing i;
+     i.getInput();
 
      return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//TO BE USED LATER
-
-
-
-// string command = "";
-//
-// while(command != "2"){
-//      cout << "Welcome to the stock-system.  Pick an option: " << endl;
-//      cout << "1. Enter new event." << endl;
-//      cout << "2. Exit." << endl;
-//      cin >> command;
-//
-//      if(command == "1"){
-//           string a;
-//      }else if(command != "1" && command != "2"){
-//           cout << "Invalid number. Try again." << endl;;
-//      }
-//
-// }
-// cout << "Exiting stock-system." << endl;
