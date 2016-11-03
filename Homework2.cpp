@@ -4,48 +4,74 @@
 #include <algorithm>
 #include <functional>
 
+//used so that std:: does not have to be used every time
 using namespace std;
 
+/*
+Author: Landon Patmore
+Assignment Number: 2
+Due: 11/3/2016
+Description: Program to simulate stocking and selling multiple types of seafood.  When a customer requests
+an item, the system checks to see if the stock can support it.  If the system has enough stock, it will sell
+the items to the customer.  If there is not enough stock in the system, then the system will put that customer
+on hold and will then sell to that customer waiting once the system has enough stock.
+
+Implementation: The program uses vectors, while and for loops, standard library, and classes
+
+Errors: There are no errors as the system knows when it can and cannot sell stock.
+
+Future NOTE: After this is submitted, I want to find a way to be able to consolidate my code so that
+there is not a lot of redundancies.
+*/
+
+//Class that creates boxes of seafood that are inserted into the queues.
 class BoxOfSeafood{
 protected:
+     //total of the box
      int total;
+     //date of box
      string date;
+     //current running amount in the box
      int currentAmount;
+     //name of the type of seafood entered
      string seafood;
 
 public:
+     //sets the values of the box of seafood (constructor type of method)
      void set_values(int t, string d, string type){
           total = t;
           date = d;
           currentAmount = t;
           seafood = type;
-
      }
 
+     //used to set the total of the box manually
      void setTotal(int t){
           total = t;
           currentAmount = t;
      }
-
+     //gets the total of the box no matter the current total
      int getTotal(){
           return total;
      }
-
+     //gets the date of the box
      string getDate(){
           return date;
      }
-
+     //gets the current total comparative to the whole total of the box
      int getCurrentTotal(){
           return currentAmount;
      }
+     //gets the type of seafood in the box used to sort the box to the right queue
      string getType(){
           return seafood;
      }
-
+     //requests an amount from the box and then returns the new current total in the box
      int requestProduct(int requested){
           currentAmount = currentAmount - requested;
           return currentAmount;
      }
+     //checks to see if the box is open or closed and then returns it
      string isOpen(){
           if(currentAmount != total){
                return "o";
@@ -53,18 +79,24 @@ public:
                return "c";
           }
      }
+     //toString method to print out the contents of the box in a nice format
      void toString(){
           cout << "Seafood[" << getTotal() << "(" << getCurrentTotal() << ")" << getDate() << "]" << isOpen();
      }
 };
 
+//does calculations to figure out what queue to put the box of seafood in and then able to
+//buy and sell the box once its entered into the system
 class BoxCalculations{
 public:
+     //method to stock the bo and takes a box of seafood as the parameter to check it's type to see what queue it's entered into
      void stockBox(BoxOfSeafood b){
-          //cout << "Adding seafood to stockpile." << endl;
+          //checks to see if the type is equal to shrimp
           if(b.getType() == "shrimp"){
+               //if it is shrimp, then it sets the total to 50
                b.setTotal(50);
-               shrimp.insert(shrimp.begin(), b);
+               //it then pushes the box to the back of the vector
+               shrimp.push_back(b);
                if(!shrimpQUEUE.empty() && getTotalOfStock(shrimp) > shrimpQUEUE.begin()->getCurrentTotal()){
                     buyStock(shrimpQUEUE.at(0), shrimpQUEUE.begin()->getCurrentTotal());
                     cout << "Selling " << shrimpQUEUE.begin()->getCurrentTotal() << " shrimp to waiting customer." << endl;
@@ -72,7 +104,7 @@ public:
                }
           } else if(b.getType() == "lobster"){
                b.setTotal(4);
-               lobster.insert(lobster.begin(), b);
+               lobster.push_back(b);
                if(!lobsterQUEUE.empty() && getTotalOfStock(lobster) > lobsterQUEUE.begin()->getCurrentTotal()){
                     buyStock(lobsterQUEUE.at(0), lobsterQUEUE.begin()->getCurrentTotal());
                     cout << "Selling " << lobsterQUEUE.begin()->getCurrentTotal() << " lobster to waiting customer." << endl;
@@ -80,7 +112,7 @@ public:
                }
           } else if(b.getType() == "crab"){
                b.setTotal(6);
-               crab.insert(crab.begin(), b);
+               crab.push_back(b);
                if(!crabQUEUE.empty() && getTotalOfStock(crab) > crabQUEUE.begin()->getCurrentTotal()){
                     buyStock(crabQUEUE.at(0), crabQUEUE.begin()->getCurrentTotal());
                     cout << "Selling " << crabQUEUE.begin()->getCurrentTotal() << " crab to waiting customer." << endl;
@@ -88,7 +120,7 @@ public:
                }
           } else if(b.getType() == "swordfish"){
                b.setTotal(8);
-               swordfish.insert(swordfish.begin(), b);
+               swordfish.push_back(b);
                if(!swordfishQUEUE.empty() && getTotalOfStock(swordfish) > swordfishQUEUE.begin()->getCurrentTotal()){
                     buyStock(swordfishQUEUE.at(0), swordfishQUEUE.begin()->getCurrentTotal());
                     cout << "Selling " << swordfishQUEUE.begin()->getCurrentTotal() << " swordfish to waiting customer." << endl;
@@ -250,7 +282,7 @@ public:
                     i.toString();
                     cout << " ";
                }
-               cout << "\n" << endl;
+               cout << "" << endl;
           }
      }
 
@@ -279,97 +311,28 @@ protected:
      vector<BoxOfSeafood> swordfishQUEUE;
 };
 
-class input{
-public:
-     string event = "";
+int main(int argc, char *argv[]){
      BoxOfSeafood b;
      BoxCalculations c;
+     string event, date, type;
+     int amount;
 
-     void start(){
-          ifstream file("data2.txt");
-         //variable to keep track of the line
-         string line;
-         //vector to hold the scanned in input strings
-         vector<string> input;
-         //loop to iterate through the file
-         while (getline(file, line)){
-             //buffer string
-             string buf;
-             //insert line into stream
-             stringstream ss(line);
-             //loop to insert split string into vector
-             while(ss>>buf){
-                 input.push_back(buf);
-             }
-         }
-         //for loop to iterate through the vector
-         //i+4 because i will always begin on a new line that way
-         for(int i = 0; i<input.size();i+=4){
-             //local variables to aid readability
-             string command, date, type;
-             int amount;
-             //setting variables based off of positions away from i
-             command = input.at(i);
-             date = input.at(i+1);
-             type = input.at(i+2);
-             //parse string to int
-             amount = atoi(input.at(i+3).c_str());
-
-             //begin process to add stock if command equals stock
-             if(command == "stock"){
-                 //check to see if a valid seafood type was input
-                     if(type == "shrimp" || type == "lobster" || type == "crab" || type == "swordfish"){
-                         //print out the header Event: ... Date: ... Type: ... Amount: ...
-                         calc.output_string(command, date, type, amount);
-                         //print statement showing the action performed successfully
-                         printf("Adding seafood to stockpile.\n");
-                         //for loop to add the appropriate amount of boxes, based on the amount specified by the input
-                         for(int i = 0; i < amount; i++){
-                             //set the values of the box based on the input
-                             box.set_values(date, type);
-                             //adds the box to the appropriate vector
-                             calc.add_stock(box);
-                         }
-                         //calls the to_string in the calc object to display the boxes of seafood
-                         calc.to_string(type);
-                     }
-                     //an invalid type was entered
-                     else{
-                         cout << "Invalid seafood type.\n";
-                     }
-             }
-             //begin process to sell stock if command equals buy
-             else if(command == "buy"){
-                 //print out the header Event: ... Date: ... Type: ... Amount: ...
-                 calc.output_string(command, date, type, amount);
-                 //calls sell_stock method with parameters from the input
-                 calc.sell_stock(type, amount, date);
-                 //calls to_string in the calc object to display the remaining boxes after stock was sold
-                 calc.to_string(type);
-             }
-             //invalid command was entered
-             else{
-                 cout << "Invalid command. \n";
-             }
-        }
-   }
-
-   //
-   // void parseEvent(string event, BoxOfSeafood a, int amount){
-   //      if(event == "buy"){
-   //           c.buyStock(a, amount);
-   //      } else if(event == "stock"){
-   //           for(int i = 0; i < amount; i++){
-   //                c.stockBox(a);
-   //           }
-   //      }
-   //      c.getStockInformation(c.getCorrectQueue(a));
-   // }
-};
-
-int main(void){
-     input i;
-     i.start();
+     while (cin >> event >> date >> type >> amount) {
+          b.set_values(0, date, type);
+          cout << "Event: " << event << " Date: " << date << " Type: " << type << " Amount " << amount << endl;;
+          if (event == "stock") {
+               cout << "Adding seafood to stockpile" << endl;
+               for(int i = 0; i < amount; i++){
+                    c.stockBox(b);
+               }
+               c.getStockInformation(c.getCorrectQueue(b));
+          } else if (event == "buy") {
+               cout << "Selling some product from stockpile" << endl;
+               cout << "Using some resources from stockpile" << endl;
+               c.buyStock(b, amount);
+               c.getStockInformation(c.getCorrectQueue(b));
+          }
+     }
 
      return 0;
-}
+};
