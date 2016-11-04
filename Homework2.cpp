@@ -97,11 +97,18 @@ public:
                b.setTotal(50);
                //it then pushes the box to the back of the vector
                shrimp.push_back(b);
+               //checks to see if the shrimpQUEUE is not empty and also checks to see if the total stock of the shrimp vector
+               //is greater than the current total of the first element in the shrimpQUEUE
                if(!shrimpQUEUE.empty() && getTotalOfStock(shrimp) > shrimpQUEUE.begin()->getCurrentTotal()){
+                    //sets the box of seafood to the first index and gets the current totoal of the box in the shrimpQUEUE
                     buyStock(shrimpQUEUE.at(0), shrimpQUEUE.begin()->getCurrentTotal());
+                    //tells the user that they are selling to the waiting customer and the amount they are seeling
                     cout << "Selling " << shrimpQUEUE.begin()->getCurrentTotal() << " shrimp to waiting customer." << endl;
+                    //erases the element in the first position after the order is fullfilled
                     shrimpQUEUE.erase(shrimpQUEUE.begin());
                }
+               //ALL OF THE BELOW CODE IS REDUNDANT AND THE SAME AS THE ABOVE CODE EXCEPT IT CHECKS THE OTHER VECTORS
+               //BUT EVERYTHING IS THE SAME
           } else if(b.getType() == "lobster"){
                b.setTotal(4);
                lobster.push_back(b);
@@ -110,6 +117,8 @@ public:
                     cout << "Selling " << lobsterQUEUE.begin()->getCurrentTotal() << " lobster to waiting customer." << endl;
                     lobsterQUEUE.erase(lobsterQUEUE.begin());
                }
+               //ALL OF THE BELOW CODE IS REDUNDANT AND THE SAME AS THE ABOVE CODE EXCEPT IT CHECKS THE OTHER VECTORS
+               //BUT EVERYTHING IS THE SAME
           } else if(b.getType() == "crab"){
                b.setTotal(6);
                crab.push_back(b);
@@ -118,6 +127,8 @@ public:
                     cout << "Selling " << crabQUEUE.begin()->getCurrentTotal() << " crab to waiting customer." << endl;
                     crabQUEUE.erase(crabQUEUE.begin());
                }
+               //ALL OF THE BELOW CODE IS REDUNDANT AND THE SAME AS THE ABOVE CODE EXCEPT IT CHECKS THE OTHER VECTORS
+               //BUT EVERYTHING IS THE SAME
           } else if(b.getType() == "swordfish"){
                b.setTotal(8);
                swordfish.push_back(b);
@@ -129,27 +140,46 @@ public:
           }
      }
 
+     //buy stock method that takes a box of seafood and and amount the user wants to buy
      void buyStock(BoxOfSeafood b, int amount){
+          //sets the amount requested to the buffer to be able to sell across multiple boxes
           int buffer = amount;
+          //checks to see what the type of the box of seafood is and then does a buy request on that
+          //type of vector.  This is for the shrimp vector.
           if(b.getType() == "shrimp"){
+               //checks to see if the order can be fullfilled with the current stock of the shrimp vector
                if(!checkIfFullfill(shrimp, b, amount)){
+                    //checks to see if the buffer is larger than the priority box's current total
                     while(buffer >= shrimp.at(setPriority(shrimp)).getCurrentTotal()){
+                         //sets the priority's current total tot the debuff to subtract from the buffer to get the
+                         //remaining amount that needs to be sold.
                          int debuff = shrimp.at(setPriority(shrimp)).getCurrentTotal();
+                         //checks to see if the size of shrimp vecor is greater than 1
                          if(shrimp.size() > 1){
+                              //if it is greater than 1 then the priority box is erased
                               shrimp.erase(shrimp.begin() + setPriority(shrimp));
+                              //sets the buffer to the amount left in the buffer minus the current total of the priority box
                               buffer = buffer - debuff;
+                              //then continues through the loop  until the size if less than 1
                          } else {
+                              //breaks out of the while loop if the size is greater than 1 so that it doesnt throw a range error
                               break;
                          }
                     }
+                    //checks to see if the buffer is equal or less than the total stock of the shrimp vector
                     if(buffer <= getTotalOfStock(shrimp)){
+                         //checks the priority box and then requests the amount of product requested and subtracts it from the current total
                          shrimp.at(setPriority(shrimp)).requestProduct(buffer);
+                         //if the current total if equal to zero, which means its empty, then clear the vector because there are no more shrimp boxes in the vector.
                          if(shrimp.at(setPriority(shrimp)).getCurrentTotal() == 0){
+                              //clears the vector
                               shrimp.clear();
                               cout << "\n" << endl;
                          }
                     }
                }
+               //ALL OF THE BELOW CODE IS REDUNDANT AND THE SAME AS THE ABOVE CODE EXCEPT IT CHECKS THE OTHER VECTORS
+               //BUT EVERYTHING IS THE SAME
           } else if(b.getType() == "lobster"){
                if(!checkIfFullfill(lobster, b, amount)){
                     while(buffer >= lobster.at(setPriority(lobster)).getCurrentTotal()){
@@ -169,6 +199,8 @@ public:
                          }
                     }
                }
+               //ALL OF THE BELOW CODE IS REDUNDANT AND THE SAME AS THE ABOVE CODE EXCEPT IT CHECKS THE OTHER VECTORS
+               //BUT EVERYTHING IS THE SAME
           } else if(b.getType() == "crab"){
                if(!checkIfFullfill(crab, b, amount)){
                     while(buffer >= crab.at(setPriority(crab)).getCurrentTotal()){
@@ -188,6 +220,8 @@ public:
                          }
                     }
                }
+               //ALL OF THE BELOW CODE IS REDUNDANT AND THE SAME AS THE ABOVE CODE EXCEPT IT CHECKS THE OTHER VECTORS
+               //BUT EVERYTHING IS THE SAME
           } else if(b.getType() == "swordfish"){
                if(!checkIfFullfill(swordfish, b, amount)){
                     while(buffer >= swordfish.at(setPriority(swordfish)).getCurrentTotal()){
@@ -210,97 +244,158 @@ public:
           }
      }
 
+     //method to check if there is more than 1 box available to sell in the vector
+     //takes a vector object to check its size
      bool checkIfEnough(vector<BoxOfSeafood> v){
+          //checks to see if the size is greater than 1
           if(v.size() > 1){
+               //returns true if it is greter than 1
                return true;
           } else {
+               //returns false if it is less than 1
                return false;
           }
 
      }
 
+     //method that sets the priority of a box inside a vector and takes a vector object as a parameter
      int setPriority(vector<BoxOfSeafood> v){
+          //sets the priority to the first element
           int priority = 0;
+          //for loop to go through the vector to check priorities
           for(int i = 0; i < v.size(); i++){
+               //cees if the index is open and the prioirty is closed
                if(v.at(i).isOpen() == "o" && v.at(priority).isOpen() == "c"){
+                    //if they are both true than it sets the index as the priority
                     priority = i;
+                    //checks to see if the index is open and the priority is open
                } else if (v.at(i).isOpen() == "o" && v.at(priority).isOpen() == "o") {
+                    //if both are open then it checks the dates and which is the later dates
                     if(v.at(i).getDate() < v.at(priority).getDate()){
+                         //then it sets the later one as the priority
                          priority = i;
                     }
+                    //checks to see if the index is open and the priority is closed
                } else if (v.at(i).isOpen() == "c" && v.at(priority).isOpen() == "o"){
+                    //if they are both true than it sets the priority as the priority
+                    //REQUIRED FOR METHOD TO WORK
                     priority = priority;
                }else{
+                    //checks to see if the index is later than the priority
                     if(v.at(i).getDate() < v.at(priority).getDate()){
+                         //it sets the as the prioirty
                          priority = i;
                     }
                }
           }
+          //returns the index of the priority
           return priority;
      }
 
 
-
+     //method to see if the vector can fullfill the request by checking the total stock against the maount requested
+     //takes a vector object, a box of seafood object, and the amount requested
      bool checkIfFullfill(vector<BoxOfSeafood> v, BoxOfSeafood b, int amount){
+          //checks to see if the vector is shrimp and also checks to see if the total stock is less than the amount
           if(b.getType() == "shrimp" && getTotalOfStock(v) < amount){
+               //print statement to user to tell them they are queued
                cout << "Putting customer on queue for: " << amount << " units."<< endl;
+               //sets the total of the box of seafood requested to the amount
                b.setTotal(amount);
+               //adds the box of seafood object to the shrimpQUEUE
                shrimpQUEUE.push_back(b);
+               //returns true so that the buy method knows the order cant be fullfilled
                return true;
+               //ALL OF THE BELOW CODE IS REDUNDANT AND THE SAME AS THE ABOVE CODE EXCEPT IT CHECKS THE OTHER VECTORS
+               //BUT EVERYTHING IS THE SAME
           }else if(b.getType() == "lobster" && getTotalOfStock(v) < amount){
                cout << "Putting customer on queue for: " << amount << " units."<< endl;
                b.setTotal(amount);
                lobsterQUEUE.push_back(b);
                return true;
+               //ALL OF THE BELOW CODE IS REDUNDANT AND THE SAME AS THE ABOVE CODE EXCEPT IT CHECKS THE OTHER VECTORS
+               //BUT EVERYTHING IS THE SAME
           }else if(b.getType() == "crab" && getTotalOfStock(v) < amount){
                cout << "Putting customer on queue for: " << amount << " units."<< endl;
                b.setTotal(amount);
                crabQUEUE.push_back(b);
                return true;
+               //ALL OF THE BELOW CODE IS REDUNDANT AND THE SAME AS THE ABOVE CODE EXCEPT IT CHECKS THE OTHER VECTORS
+               //BUT EVERYTHING IS THE SAME
           }else if(b.getType() == "swordfish" && getTotalOfStock(v) < amount){
                cout << "Putting customer on queue for: " << amount << " units."<< endl;
                b.setTotal(amount);
                swordfishQUEUE.push_back(b);
                return true;
           } else {
+               //returns false if the order can be fullfilled
                return false;
           }
      }
 
+     //method to get the total stock of the vector requested
      int getTotalOfStock(vector<BoxOfSeafood> v){
+          //variable for the total of the vector
           int totalTotal = 0;
+          //for loop to go through the box of sea food objects and adds all of their current totals up into
+          //a big sum
           for(BoxOfSeafood i : v){
+               //sets the total to the current running total plus the current index of the box of seafood's current total
                totalTotal = totalTotal + i.getCurrentTotal();
           }
+          //returns the total of the vector for methods to check the total of a requested vector
           return totalTotal;
      }
 
+     //method to print out the toString() method of all the box of sea food objects inside a requested vector
      void getStockInformation(vector<BoxOfSeafood> v){
+          //checks to see if the size is not 0
+          //needs to be checked or an error is thrown as a segmentation fault and crashes the program
           if(v.size() != 0){
+               //gets the type and prints it before all of the boxes
                cout << v.begin()->getType() << ": ";
+               //for loop to go through the boxes of seafood in the vecotr specified
                for(BoxOfSeafood i : v){
+                    //runs the toString() method of the box of seafood to show an output of the details of the box
                     i.toString();
+                    //spaces between box details
                     cout << " ";
                }
+               //breaks the line
                cout << "" << endl;
           }
      }
 
+     //method to get the correct queue of the box requested
+     //it takes a box of sea food and returns a vector of seafood
      vector<BoxOfSeafood> getCorrectQueue(BoxOfSeafood b){
+          //checks to see if the type of the box is a shrimp
           if(b.getType() == "shrimp"){
+               //if it is a shrimp, then return the shrimp vector
                return shrimp;
+          //same as above code, just for another vector
           } else if(b.getType() == "lobster"){
+               //same as above code, just for another vector
                return lobster;
+          //same as above code, just for another vector
           } else if(b.getType() == "crab"){
+               //same as above code, just for another vector
                return crab;
+          //same as above code, just for another vector
           } else if(b.getType() == "swordfish"){
+               //same as above code, just for another vector
                return swordfish;
           } else {
+               //returns a shrimp vector
+               //this is only so that a warning is supresed and the data generated from the data files
+               //will only have the four types of seafood and no others.  This is why there is no checking
+               //if there is a type that can't be bought.
                return shrimp;
           }
      }
 
 protected:
+     //vectors of the stock and the queue of the customers waiting to be given stock
      vector<BoxOfSeafood> shrimp;
      vector<BoxOfSeafood> lobster;
      vector<BoxOfSeafood> crab;
@@ -312,24 +407,50 @@ protected:
 };
 
 int main(int argc, char *argv[]){
+     //box of seafood object
      BoxOfSeafood b;
+     //box calculations object
      BoxCalculations c;
+     //variables used for the input of the data file
      string event, date, type;
      int amount;
 
+     //while there is still a line in the the file, read it
+
      while (cin >> event >> date >> type >> amount) {
+          //sets the values of the box of sea food to be added to the vector
+          //total is set to 0 because the total for the specific box of seafood,
+          //when the type is checked, is set to what the total is of that type of box
+          //when it is about to be added into the vector.
           b.set_values(0, date, type);
-          cout << "Event: " << event << " Date: " << date << " Type: " << type << " Amount " << amount << endl;;
+          //prints out the commands entered from the line
+          cout << "Event: " << event << " Date: " << date << " Type: " << type << " Amount " << amount << endl;
+          //checks to see if the event entered was a stock command
           if (event == "stock") {
+               //if it is a stock command then it prints this to the command line to notify
+               //the user that stock is being added to the stockpile.
                cout << "Adding seafood to stockpile" << endl;
+               //goes through a for loop and adds the amount of boxes entered into a
+               //a vector
                for(int i = 0; i < amount; i++){
+                    //calls the stock box method to stock the specified box in the
+                    //vector of that type
                     c.stockBox(b);
                }
+               //prints out the stock information of a specific vector and gets the correct queue
+               //done after every stock method to show the user the amount of stock in the vector
                c.getStockInformation(c.getCorrectQueue(b));
+          //checks to see if the event enetered was a buy command
           } else if (event == "buy") {
+               //prints these to the command line so that the user knows the buy command
+               //went through and stock is being bought
                cout << "Selling some product from stockpile" << endl;
                cout << "Using some resources from stockpile" << endl;
+               //calls the buy stock method on a vector that is checked within the method
+               //by the box of sea food's type that was entered
                c.buyStock(b, amount);
+               //prints out the stock information of a specific vector and gets the correct queue
+               //done after every buy method to show the user the amount of stock in the vector
                c.getStockInformation(c.getCorrectQueue(b));
           }
      }
